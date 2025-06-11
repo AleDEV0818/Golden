@@ -196,6 +196,12 @@
         <!-- Content wrapper -->
         <div class="content-wrapper">
           <div class="container-xxl flex-grow-1 container-p-y">
+
+            <!--Metrica -->
+
+
+ 
+
 <%
 const defaultPanel = {
   nb_prem: '$0.00', nb_pol: 0,
@@ -204,19 +210,23 @@ const defaultPanel = {
   tot_prem: '$0.00', tot_pol: 0
 };
 
-const panelAgencyToday = agency_today || defaultPanel;
-const panelCompanyToday = company_today || defaultPanel;
-const panelAgencyMonth = agency_month || defaultPanel;
-const panelCompanyMonth = company_month || defaultPanel;
+ // Las variables panelToday, panelMonth, panelCompanyToday, panelCompanyMonth, location_type y agency_name
+ // vienen SIEMPRE desde el backend. Si por alguna razón alguna falta, usamos defaultPanel.
+const pToday = panelToday || defaultPanel;
+const pMonth = panelMonth || defaultPanel;
+const pCompanyToday = panelCompanyToday || defaultPanel;
+const pCompanyMonth = panelCompanyMonth || defaultPanel;
+
+const panelTodayText = location_type == 1 ? "Corporate - Today" : (agency_name || "Agency") + " - Today";
+const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_name || "Agency") + " - This Month";
 %>
 
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
-
-    <!-- Agency / Corporate Today -->
+    <!-- Agency/Corporate Today -->
     <div class="col-sm-6 col-lg-3 mb-2">
       <p class="mb-0 text-primary fw-semibold letter-spacing-1">
-        <% if (location_type == 1) { %>Corporate - Today<% } else { %><%= agency_alias %> - Today<% } %>
+        <%= panelTodayText %>
       </p>
       <div class="card border-0 shadow-sm">
         <div class="card-body pt-2 pb-2">
@@ -225,7 +235,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyToday.nb_prem %> / <%= panelAgencyToday.nb_pol %>
+              <%= pToday.nb_prem %> / <%= pToday.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -233,7 +243,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-repeat ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyToday.rn_prem %> / <%= panelAgencyToday.rn_pol %>
+              <%= pToday.rn_prem %> / <%= pToday.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -241,7 +251,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-writing ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyToday.rw_prem %> / <%= panelAgencyToday.rw_pol %>
+              <%= pToday.rw_prem %> / <%= pToday.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
@@ -249,7 +259,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyToday.tot_prem %> / <%= panelAgencyToday.tot_pol %>
+              <%= pToday.tot_prem %> / <%= pToday.tot_pol %>
             </span>
           </div>
         </div>
@@ -268,7 +278,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyToday.nb_prem %> / <%= panelCompanyToday.nb_pol %>
+              <%= pCompanyToday.nb_prem %> / <%= pCompanyToday.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -276,7 +286,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-repeat ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyToday.rn_prem %> / <%= panelCompanyToday.rn_pol %>
+              <%= pCompanyToday.rn_prem %> / <%= pCompanyToday.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -284,7 +294,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-writing ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyToday.rw_prem %> / <%= panelCompanyToday.rw_pol %>
+              <%= pCompanyToday.rw_prem %> / <%= pCompanyToday.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
@@ -292,17 +302,17 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyToday.tot_prem %> / <%= panelCompanyToday.tot_pol %>
+              <%= pCompanyToday.tot_prem %> / <%= pCompanyToday.tot_pol %>
             </span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Agency / Corporate This Month -->
+    <!-- Agency/Corporate This Month -->
     <div class="col-sm-6 col-lg-3 mb-2">
       <p class="mb-0 text-primary fw-semibold letter-spacing-1">
-        <% if (location_type == 1) { %>Corporate - This Month<% } else { %><%= agency_alias %> - This Month<% } %>
+        <%= panelMonthText %>
       </p>
       <div class="card border-0 shadow-sm">
         <div class="card-body pt-2 pb-2">
@@ -311,7 +321,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyMonth.nb_prem %> / <%= panelAgencyMonth.nb_pol %>
+              <%= pMonth.nb_prem %> / <%= pMonth.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -319,7 +329,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-repeat ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyMonth.rn_prem %> / <%= panelAgencyMonth.rn_pol %>
+              <%= pMonth.rn_prem %> / <%= pMonth.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -327,7 +337,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-writing ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyMonth.rw_prem %> / <%= panelAgencyMonth.rw_pol %>
+              <%= pMonth.rw_prem %> / <%= pMonth.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
@@ -335,7 +345,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelAgencyMonth.tot_prem %> / <%= panelAgencyMonth.tot_pol %>
+              <%= pMonth.tot_prem %> / <%= pMonth.tot_pol %>
             </span>
           </div>
         </div>
@@ -354,7 +364,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyMonth.nb_prem %> / <%= panelCompanyMonth.nb_pol %>
+              <%= pCompanyMonth.nb_prem %> / <%= pCompanyMonth.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -362,7 +372,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-repeat ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyMonth.rn_prem %> / <%= panelCompanyMonth.rn_pol %>
+              <%= pCompanyMonth.rn_prem %> / <%= pCompanyMonth.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
@@ -370,7 +380,7 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-writing ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyMonth.rw_prem %> / <%= panelCompanyMonth.rw_pol %>
+              <%= pCompanyMonth.rw_prem %> / <%= pCompanyMonth.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
@@ -378,15 +388,17 @@ const panelCompanyMonth = company_month || defaultPanel;
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
             <span class="ms-1 fw-semibold">
-              <%= panelCompanyMonth.tot_prem %> / <%= panelCompanyMonth.tot_pol %>
+              <%= pCompanyMonth.tot_prem %> / <%= pCompanyMonth.tot_pol %>
             </span>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
+
+             <!--Metrica -->
+
           <footer class="content-footer footer bg-footer-theme">
             <div class="container-xxl">
               <div class="footer-container d-flex align-items-center justify-content-between py-2 flex-md-row flex-column">
