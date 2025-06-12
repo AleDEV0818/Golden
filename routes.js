@@ -67,10 +67,10 @@ router.post('/users/search', checkNotAuthenticated, dataSearch);
 
 // GTI Directory
 router.get('/gtidirectory', checkNotAuthenticated, async function(req, res) { /* implement here if needed */ });
-// Enlaza rutas de GTI Directory bajo /users/
 router.use('/users', gtiDirectoryRouter);
 
-// Agency dashboard (PRODUCCION/AGENCY)
+// Agency 
 router.get('/users/agency', checkNotAuthenticated, agency);
+
 
 export default router;
