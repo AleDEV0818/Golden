@@ -70,7 +70,7 @@ router.get('/gtidirectory', checkNotAuthenticated, async function(req, res) { /*
 router.use('/users', gtiDirectoryRouter);
 
 // Agency 
-router.get('/users/agency', checkNotAuthenticated, agency);
+router.get('/users/agency', checkAuthenticated, agency);
 
 
 export default router;
