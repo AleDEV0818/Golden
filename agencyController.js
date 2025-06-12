@@ -197,23 +197,6 @@ const totalMonthlyData = totalMonthlyRows.length > 0 ? totalMonthlyRows[0] : { p
 `);
 
 
-const user_Id = req.user?.user_id || req.user?.id;
-
-const result = await pool.query(`
-    SELECT u.user_id, u.display_name, u.job_title, u.department, 
-           l.alias AS agency, u.business_phone, u.ext
-    FROM entra.users u
-    LEFT JOIN qq.locations l ON u.location_id = l.location_id
-    WHERE u.active = true AND u.user_id = $1
-`, [userId]);
-
-const users = result.rows[0]; // ✅ Guardamos el usuario autenticado
-
-if (!user) {
-    return res.status(404).send("Error: Usuario no encontrado");
-}
-
-console.log("Usuario obtenido:", users); // ✅ Verifica qué datos tiene en la consola
 
   res.render('agency', {
     panelToday,
@@ -227,7 +210,7 @@ console.log("Usuario obtenido:", users); // ✅ Verifica qué datos tiene en la 
     totalDaily: totalDailyData,
     totalMonthly: totalMonthlyData,
     carrierRanking,
-     users,
+    
    
     
 });
