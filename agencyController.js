@@ -1,7 +1,5 @@
 import { pool } from "../config/dbConfig.js";
 
-
-
 // Mapeo para mostrar el tipo de agencia
 const typeMap = {
   1: "Corporate",
@@ -9,7 +7,7 @@ const typeMap = {
   4: "Independent Agent"
 };
 
-export const agency= async (req, res) => {
+export const agency = async (req, res) => {
   try {
     const date = new Date();
     const initial_date = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -27,93 +25,92 @@ export const agency= async (req, res) => {
     let panelCompanyToday = { ...defaultPanel };
     let panelCompanyMonth = { ...defaultPanel };
     let agency_name = "Agency";
+    let location_type = 1; // Default: Corporate
 
-    // OBTENEMOS EL USUARIO COMPLETO
-    const userId = req.user.user_id || req.user.id;
-    const userQuery = `
-      SELECT u.user_id, u.display_name, u.job_title, u.location_id, l.location_type, l.alias, lt.location_type as location_type_name
-      FROM entra.users u
-      JOIN qq.locations l ON u.location_id = l.location_id
-      JOIN admin.location_types lt ON l.location_type = lt.location_type_id
-      WHERE u.user_id = $1
-    `;
-    const { rows: userRows } = await pool.query(userQuery, [userId]);
-    if (!userRows.length) return res.status(404).send("Usuario no encontrado");
-    const user = userRows[0];
+    // Si hay usuario logueado, personaliza el panel
+    if (req.user) {
+      const userId = req.user.user_id || req.user.id;
+      const userQuery = `
+        SELECT u.user_id, u.display_name, u.job_title, u.location_id, l.location_type, l.alias, lt.location_type as location_type_name
+        FROM entra.users u
+        JOIN qq.locations l ON u.location_id = l.location_id
+        JOIN admin.location_types lt ON l.location_type = lt.location_type_id
+        WHERE u.user_id = $1
+      `;
+      const { rows: userRows } = await pool.query(userQuery, [userId]);
+      if (userRows.length) {
+        const user = userRows[0];
+        location_type = user.location_type;
 
-    // Si NO es corporativo, usar datos de la agencia
-    if (user.location_type !== 1) {
-      agency_name = user.alias;
-
-      // --- PRODUCCIÓN DIARIA DE LA AGENCIA ---
-      let production = (await pool.query(
-        `SELECT * FROM intranet.dashboard_location_daily($1)`, [user.location_id]
-      )).rows;
-      if (production.length) {
-        panelToday = {
-          nb_prem: production[0]?.premium ? production[0].premium.slice(0, -3) : '$0',
-          nb_pol: production[0]?.policies || 0,
-          rn_prem: production[1]?.premium ? production[1].premium.slice(0, -3) : '$0',
-          rn_pol: production[1]?.policies || 0,
-          rw_prem: production[2]?.premium ? production[2].premium.slice(0, -3) : '$0',
-          rw_pol: production[2]?.policies || 0,
-          tot_prem: production[3]?.premium ? production[3].premium.slice(0, -3) : '$0',
-          tot_pol: production[3]?.policies || 0,
-        };
-      }
-
-      // --- PRODUCCIÓN MENSUAL DE LA AGENCIA ---
-      production = (await pool.query(
-        `SELECT * FROM intranet.dashboard_location_month($1, $2, $3)`,
-        [initial_date, final_date, user.location_id]
-      )).rows;
-      if (production.length) {
-        panelMonth = {
-          nb_prem: production[0]?.premium ? production[0].premium.slice(0, -3) : '$0.00',
-          nb_pol: production[0]?.policies || 0,
-          rn_prem: production[1]?.premium ? production[1].premium.slice(0, -3) : '$0.00',
-          rn_pol: production[1]?.policies || 0,
-          rw_prem: production[2]?.premium ? production[2].premium.slice(0, -3) : '$0.00',
-          rw_pol: production[2]?.policies || 0,
-          tot_prem: production[3]?.premium ? production[3].premium.slice(0, -3) : '$0.00',
-          tot_pol: production[3]?.policies || 0,
-        };
-      }
-    } else {
-      agency_name = "Corporate";
-
-      // --- CORPORATE TODAY ---
-      let corporateTodayRows = (await pool.query('SELECT * FROM intranet.corporate_today')).rows;
-      if (corporateTodayRows.length) {
-        panelToday = {
-          nb_prem: corporateTodayRows[0]?.premium ? corporateTodayRows[0].premium.toString() : '$0',
-          nb_pol: corporateTodayRows[0]?.policies || 0,
-          rn_prem: corporateTodayRows[1]?.premium ? corporateTodayRows[1].premium.toString() : '$0',
-          rn_pol: corporateTodayRows[1]?.policies || 0,
-          rw_prem: corporateTodayRows[2]?.premium ? corporateTodayRows[2].premium.toString() : '$0',
-          rw_pol: corporateTodayRows[2]?.policies || 0,
-          tot_prem: corporateTodayRows[3]?.premium ? corporateTodayRows[3].premium.toString() : '$0',
-          tot_pol: corporateTodayRows[3]?.policies || 0,
-        };
-      }
-
-      // --- CORPORATE MONTH ---
-      let corporateMonthRows = (await pool.query('SELECT * FROM intranet.corporate_month')).rows;
-      if (corporateMonthRows.length) {
-        panelMonth = {
-          nb_prem: corporateMonthRows[0]?.premium ? corporateMonthRows[0].premium.toString() : '$0.00',
-          nb_pol: corporateMonthRows[0]?.policies || 0,
-          rn_prem: corporateMonthRows[1]?.premium ? corporateMonthRows[1].premium.toString() : '$0.00',
-          rn_pol: corporateMonthRows[1]?.policies || 0,
-          rw_prem: corporateMonthRows[2]?.premium ? corporateMonthRows[2].premium.toString() : '$0.00',
-          rw_pol: corporateMonthRows[2]?.policies || 0,
-          tot_prem: corporateMonthRows[3]?.premium ? corporateMonthRows[3].premium.toString() : '$0.00',
-          tot_pol: corporateMonthRows[3]?.policies || 0,
-        };
+        if (user.location_type !== 1) {
+          agency_name = user.alias;
+          // --- PRODUCCIÓN DIARIA DE LA AGENCIA ---
+          let production = (await pool.query(
+            `SELECT * FROM intranet.dashboard_location_daily($1)`, [user.location_id]
+          )).rows;
+          if (production.length) {
+            panelToday = {
+              nb_prem: production[0]?.premium ? production[0].premium.slice(0, -3) : '$0',
+              nb_pol: production[0]?.policies || 0,
+              rn_prem: production[1]?.premium ? production[1].premium.slice(0, -3) : '$0',
+              rn_pol: production[1]?.policies || 0,
+              rw_prem: production[2]?.premium ? production[2].premium.slice(0, -3) : '$0',
+              rw_pol: production[2]?.policies || 0,
+              tot_prem: production[3]?.premium ? production[3].premium.slice(0, -3) : '$0',
+              tot_pol: production[3]?.policies || 0,
+            };
+          }
+          // --- PRODUCCIÓN MENSUAL DE LA AGENCIA ---
+          production = (await pool.query(
+            `SELECT * FROM intranet.dashboard_location_month($1, $2, $3)`,
+            [initial_date, final_date, user.location_id]
+          )).rows;
+          if (production.length) {
+            panelMonth = {
+              nb_prem: production[0]?.premium ? production[0].premium.slice(0, -3) : '$0.00',
+              nb_pol: production[0]?.policies || 0,
+              rn_prem: production[1]?.premium ? production[1].premium.slice(0, -3) : '$0.00',
+              rn_pol: production[1]?.policies || 0,
+              rw_prem: production[2]?.premium ? production[2].premium.slice(0, -3) : '$0.00',
+              rw_pol: production[2]?.policies || 0,
+              tot_prem: production[3]?.premium ? production[3].premium.slice(0, -3) : '$0.00',
+              tot_pol: production[3]?.policies || 0,
+            };
+          }
+        } else {
+          agency_name = "Corporate";
+          // --- CORPORATE TODAY ---
+          let corporateTodayRows = (await pool.query('SELECT * FROM intranet.corporate_today')).rows;
+          if (corporateTodayRows.length) {
+            panelToday = {
+              nb_prem: corporateTodayRows[0]?.premium ? corporateTodayRows[0].premium.toString() : '$0',
+              nb_pol: corporateTodayRows[0]?.policies || 0,
+              rn_prem: corporateTodayRows[1]?.premium ? corporateTodayRows[1].premium.toString() : '$0',
+              rn_pol: corporateTodayRows[1]?.policies || 0,
+              rw_prem: corporateTodayRows[2]?.premium ? corporateTodayRows[2].premium.toString() : '$0',
+              rw_pol: corporateTodayRows[2]?.policies || 0,
+              tot_prem: corporateTodayRows[3]?.premium ? corporateTodayRows[3].premium.toString() : '$0',
+              tot_pol: corporateTodayRows[3]?.policies || 0,
+            };
+          }
+          // --- CORPORATE MONTH ---
+          let corporateMonthRows = (await pool.query('SELECT * FROM intranet.corporate_month')).rows;
+          if (corporateMonthRows.length) {
+            panelMonth = {
+              nb_prem: corporateMonthRows[0]?.premium ? corporateMonthRows[0].premium.toString() : '$0.00',
+              nb_pol: corporateMonthRows[0]?.policies || 0,
+              rn_prem: corporateMonthRows[1]?.premium ? corporateMonthRows[1].premium.toString() : '$0.00',
+              rn_pol: corporateMonthRows[1]?.policies || 0,
+              rw_prem: corporateMonthRows[2]?.premium ? corporateMonthRows[2].premium.toString() : '$0.00',
+              rw_pol: corporateMonthRows[2]?.policies || 0,
+              tot_prem: corporateMonthRows[3]?.premium ? corporateMonthRows[3].premium.toString() : '$0.00',
+              tot_pol: corporateMonthRows[3]?.policies || 0,
+            };
+          }
+        }
       }
     }
-
-    // --- PRODUCCIÓN DE LA COMPAÑÍA ---
+    // --- PRODUCCIÓN DE LA COMPAÑÍA (siempre disponible, incluso sin usuario) ---
     let companyTodayRows = (await pool.query(`SELECT * FROM intranet.dashboard_company_today`)).rows;
     let companyMonthRows = (await pool.query(
       `SELECT * FROM intranet.dashboard_sales_month_total_by_type_tkg($1, $2)`,
@@ -173,47 +170,40 @@ export const agency= async (req, res) => {
     `);
     const totalDailyData = totalDaily.length > 0 ? totalDaily[0] : { premium: "0", policies: "0" };
 
-// --- AGENT RANKING (ranking de agencias) ---
-const { rows: agencyRanking } = await pool.query(`
-  SELECT id_location, location, policies, premium, percent
-  FROM intranet.agency_dashboard_agencies
-  ORDER BY premium DESC
-  LIMIT 50
-`);
+    // --- AGENT RANKING (ranking de agencias) ---
+    const { rows: agencyRanking } = await pool.query(`
+      SELECT id_location, location, policies, premium, percent
+      FROM intranet.agency_dashboard_agencies
+      ORDER BY premium DESC
+      LIMIT 50
+    `);
 
-// --- TOTAL MONTHLY (ventas totales de la compañía del mes) ---
-const { rows: totalMonthlyRows } = await pool.query(`
-  SELECT premium, policies FROM intranet.nbtv_total_sales_month
-`);
-const totalMonthlyData = totalMonthlyRows.length > 0 ? totalMonthlyRows[0] : { premium: "$0.00", policies: 0 };
+    // --- TOTAL MONTHLY (ventas totales de la compañía del mes) ---
+    const { rows: totalMonthlyRows } = await pool.query(`
+      SELECT premium, policies FROM intranet.nbtv_total_sales_month
+    `);
+    const totalMonthlyData = totalMonthlyRows.length > 0 ? totalMonthlyRows[0] : { premium: "$0.00", policies: 0 };
 
+    // --- TOTAL CARRIERS (ventas totales de la compañía del mes) ---
+    const { rows: carrierRanking } = await pool.query(`
+      SELECT carrier_name, policies, premium, percent_premium_growth, percent_policies_growth
+      FROM intranet.carrier_dashboard_sales
+      ORDER BY premium DESC
+    `);
 
-// --- TOTAL CARRIERS (ventas totales de la compañía del mes) --
-
- const { rows: carrierRanking } = await pool.query(`
-    SELECT carrier_name, policies, premium, percent_premium_growth, percent_policies_growth
-    FROM intranet.carrier_dashboard_sales
-    ORDER BY premium DESC
-`);
-
-
-
-  res.render('agency', {
-    panelToday,
-    panelMonth,
-    panelCompanyToday,
-    panelCompanyMonth,
-    location_type: user.location_type,
-    agency_name,
-    csrRanking: csrRankingWithCarriers,
-    agencyRanking,
-    totalDaily: totalDailyData,
-    totalMonthly: totalMonthlyData,
-    carrierRanking,
-    
-   
-    
-});
+    res.render('agency', {
+      panelToday,
+      panelMonth,
+      panelCompanyToday,
+      panelCompanyMonth,
+      location_type,
+      agency_name,
+      csrRanking: csrRankingWithCarriers,
+      agencyRanking,
+      totalDaily: totalDailyData,
+      totalMonthly: totalMonthlyData,
+      carrierRanking,
+    });
   } catch (err) {
     console.error('Error en agencyDashboard:', err);
     res.status(500).send("Error en el servidor");
