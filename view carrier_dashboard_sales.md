@@ -38,3 +38,5 @@ CREATE OR REPLACE VIEW intranet.carrier_dashboard_sales
 
 ALTER TABLE intranet.carrier_dashboard_sales
     OWNER TO postgres;
+
+commit message
