@@ -1,6 +1,6 @@
 import { pool } from "../config/dbConfig.js";
 
-// Mapeo para mostrar el tipo de agencia
+
 const typeMap = {
   1: "Corporate",
   2: "Franchise",
@@ -25,9 +25,9 @@ export const agency = async (req, res) => {
     let panelCompanyToday = { ...defaultPanel };
     let panelCompanyMonth = { ...defaultPanel };
     let agency_name = "Agency";
-    let location_type = 1; // Default: Corporate
+    let location_type = 1; 
 
-    // Si hay usuario logueado, personaliza el panel
+    
     if (req.user) {
       const userId = req.user.user_id || req.user.id;
       const userQuery = `
@@ -110,7 +110,7 @@ export const agency = async (req, res) => {
         }
       }
     }
-    // --- PRODUCCIÓN DE LA COMPAÑÍA (siempre disponible, incluso sin usuario) ---
+    // --- PRODUCCIÓN DE LA COMPAÑÍA  ---
     let companyTodayRows = (await pool.query(`SELECT * FROM intranet.dashboard_company_today`)).rows;
     let companyMonthRows = (await pool.query(
       `SELECT * FROM intranet.dashboard_sales_month_total_by_type_tkg($1, $2)`,
@@ -141,7 +141,7 @@ export const agency = async (req, res) => {
       };
     }
 
-    // --- CSR RANKING: TOP 3 CSR DE LA SEMANA PASADA ---
+    // --- CSR RANKING: TOP 3 CSR  ---
     const { rows: csrRanking } = await pool.query(`
       SELECT csr, policies, premium, id_user, location
       FROM intranet.agency_csr_last_week
