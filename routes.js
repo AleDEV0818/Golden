@@ -16,9 +16,11 @@ import {
   nbSalesStatistics,
   rnSalesStatistics,
   rwSalesStatistics,
-  cnSalesStatistics
+  cnSalesStatistics,
+  dashboardMetrics 
 } from "./controllers/dash-reports.js";
-import { agency } from './controllers/agencyController.js';
+
+import { agency, agencyDashboardMetrics } from './controllers/agencyController.js';
 import {
   headcarrier,
   addHeadCarrier,
@@ -31,8 +33,29 @@ import { passwordMail } from "./controllers/mailer.js";
 import passport from "passport";
 import { authenticate } from "./config/passportConfig.js";
 import gtiDirectoryRouter from "./controllers/gtusers.js";
+import notRenewalsController from "./controllers/NotRenewalsController.js";
+import renewalsController from "./controllers/renewalsController.js";
+ import { 
+  renderMessageCenter,
+  streamVideo,
+  downloadVideo 
+} from "./controllers/messageController.js";
+
 
 const router = express.Router();
+
+/** MIDDLEWARE PARA VERIFICAR AUTENTICACIÓN EN RUTAS RENOVACIONES */
+const renewalsAuth = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
+  }
+  
+  if (!req.user?.location_id) {
+    return res.status(403).send("Usuario sin ubicación asignada");
+  }
+  
+  next();
+};
 
 /** HTML REQUESTS */
 
@@ -54,6 +77,8 @@ router.post('/users/dashboard/nbSalesStatistics', checkNotAuthenticated, nbSales
 router.post('/users/dashboard/rnSalesStatistics', checkNotAuthenticated, rnSalesStatistics);
 router.post('/users/dashboard/rwSalesStatistics', checkNotAuthenticated, rwSalesStatistics);
 router.post('/users/dashboard/cnSalesStatistics', checkNotAuthenticated, cnSalesStatistics);
+router.get('/users/dashboard/metrics', checkNotAuthenticated, dashboardMetrics);
+
 
 // Config
 router.get('/users/config/headcarriers', checkNotAuthenticated, headcarrier);
@@ -71,6 +96,54 @@ router.use('/users', gtiDirectoryRouter);
 
 // Agency 
 router.get('/users/agency', agency);
+router.get('/api/agency-dashboard-metrics', agencyDashboardMetrics); 
 
 
+
+
+router.get(
+  '/users/message-center/upholding-gti-standards',
+  renewalsAuth,
+  streamVideo
+);
+
+router.get(
+  '/users/renewals/message-center',
+  renewalsAuth,
+  renderMessageCenter
+);
+
+router.get('/video/download', downloadVideo);
+
+// ======= RUTAS DE RENOVACIONES PRÓXIMAS =======
+router.get(
+  "/users/renewals/agency-upcoming-renewals", 
+  renewalsAuth, 
+  renewalsController.agencyUpcomingRenewalsView
+);
+
+router.post(
+  "/users/renewals/agency-upcoming-renewals/data", 
+  renewalsAuth, 
+  renewalsController.agencyUpcomingRenewalsData
+);
+
+// ======= RUTAS DE RENOVACIONES EXPIRADAS =======
+router.get(
+  '/users/renewals/agency-expired-not-renewed', 
+  renewalsAuth,
+  notRenewalsController.expiredNotRenewedView
+);
+
+
+router.post(
+  '/users/renewals/agency-expired-not-renewed/data-month', 
+  renewalsAuth,
+  notRenewalsController.getExpiredPolicies
+);
+
+
+
+
+export default router;
 export default router;
