@@ -1,4 +1,3 @@
-
 <!doctype html>
 
 <html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact" dir="ltr"
@@ -98,21 +97,57 @@
         
           <!-- Dashboard -->
 
-          <li class="menu-item active">
+          <li class="menu-item">
             <a href="/users/dashboard" class="menu-link">
               <i class="menu-icon tf-icons ti ti-smart-home"></i>
               <div data-i18n="Dashboard">Dashboard</div>
             </a>
           </li>
 
+          
+                          <li class="menu-item active">
+                  <a href="/users/agency" class="menu-link">
+                  <i class="menu-icon tf-icons ti ti-home-heart"></i>
+           <div data-i18n="Agencies">Agencies</div>
+           </a>
+                  </li>
+
+
+          <li class="menu-item">
+         <a href="/users/gtidirectory" class="menu-link">
+        <i class="menu-icon tf-icons ti ti-address-book"></i>
+          <div data-i18n="GTI Directory">GTI Directory</div>
+              </a>
+                  </li>
+
+                  <!-- 
+                <li class="menu-item ">
+            <a href="/users/renewals/agency-upcoming-renewals" class="menu-link">
+          <i class="menu-icon tf-icons ti ti-refresh"></i>
+         <div data-i18n="Reviews">Reviews</div>
+           </a>
+                              </li>
+
+-->
+
+
+ <li class="menu-header small text-uppercase">
+            <span class="menu-header-text" data-i18n="MARKETING">MARKETING</span>
+
+<li class="menu-item">
+  <a href="/users/renewals/message-center" class="menu-link">
+    <i class="menu-icon tf-icons ti ti-speakerphone"></i> 
+    <div data-i18n="Message Center">Message Center</div>
+  </a>
+</li>
 
 
           <!-- ////////////////ADMIN/////////////////////// -->
         
-          <li class="menu-header small text-uppercase">
+            <li class="menu-header small text-uppercase">
             <span class="menu-header-text" data-i18n="ADMIN">ADMIN</span>
           </li>
-        
+
           <li class="menu-item">
             <a href="/users/config/headcarriers" class="menu-link">
               <i class="menu-icon tf-icons ti ti-settings-check"></i>
@@ -120,19 +155,14 @@
             </a>
           </li>
 
-          <li class="menu-item active">
-  <a href="/users/gtidirectory" class="menu-link">
-    <i class="menu-icon tf-icons ti ti-address-book"></i>
-    <div data-i18n="GTI Directory">GTI Directory</div>
-  </a>
-</li>
+    
 
-<li class="menu-item">
-  <a href="/users/agency" class="menu-link">
-    <i class="menu-icon tf-icons ti ti-home-heart"></i>
-    <div data-i18n="Agencies">Agencies</div>
-  </a>
-</li>
+
+
+
+
+           
+
 
         </ul>
 
@@ -252,25 +282,9 @@
         <div class="content-wrapper">
 
 
-
-            <!--Metrica -->
-
-
- 
-
+<!-- Metricas Actualizables -->
 <%
-const defaultPanel = {
-  nb_prem: '$0.00', nb_pol: 0,
-  rn_prem: '$0.00', rn_pol: 0,
-  rw_prem: '$0.00', rw_pol: 0,
-  tot_prem: '$0.00', tot_pol: 0
-};
-
-const pToday = panelToday || defaultPanel;
-const pMonth = panelMonth || defaultPanel;
-const pCompanyToday = panelCompanyToday || defaultPanel;
-const pCompanyMonth = panelCompanyMonth || defaultPanel;
-
+// Usamos las variables originales del controlador
 const panelTodayText = location_type == 1 ? "Corporate - Today" : (agency_name || "Agency") + " - Today";
 const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_name || "Agency") + " - This Month";
 %>
@@ -278,8 +292,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
     <!-- Agency/Corporate Today -->
-    <div class="col-sm-6 col-lg-3 mb-2">
-      <p class="mb-0 text-primary fw-semibold letter-spacing-1">
+    <div class="col-sm-6 col-lg-3 mb-2 metric-card" id="agency-today-panel">
+      <p class="mb-0 text-primary fw-semibold letter-spacing-1 panel-title">
         <%= panelTodayText %>
       </p>
       <div class="card border-0 shadow-sm">
@@ -288,32 +302,32 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             <span class="avatar-initial rounded-circle bg-label-primary me-2">
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pToday.nb_prem %> / <%= pToday.nb_pol %>
+            <span class="ms-1 fw-semibold nb-metric">
+              <%= panelToday.nb_prem %> / <%= panelToday.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-info me-2">
               <i class="ti ti-repeat ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pToday.rn_prem %> / <%= pToday.rn_pol %>
+            <span class="ms-1 fw-semibold rn-metric">
+              <%= panelToday.rn_prem %> / <%= panelToday.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-warning me-2">
               <i class="ti ti-writing ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pToday.rw_prem %> / <%= pToday.rw_pol %>
+            <span class="ms-1 fw-semibold rw-metric">
+              <%= panelToday.rw_prem %> / <%= panelToday.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
             <span class="avatar-initial rounded-circle bg-label-success me-2">
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pToday.tot_prem %> / <%= pToday.tot_pol %>
+            <span class="ms-1 fw-semibold tot-metric">
+              <%= panelToday.tot_prem %> / <%= panelToday.tot_pol %>
             </span>
           </div>
         </div>
@@ -321,8 +335,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
     </div>
 
     <!-- Company Today -->
-    <div class="col-sm-6 col-lg-3 mb-2">
-      <p class="mb-0 text-primary fw-semibold letter-spacing-1">
+    <div class="col-sm-6 col-lg-3 mb-2 metric-card" id="company-today-panel">
+      <p class="mb-0 text-primary fw-semibold letter-spacing-1 panel-title">
         Company - Today
       </p>
       <div class="card border-0 shadow-sm">
@@ -331,32 +345,32 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             <span class="avatar-initial rounded-circle bg-label-primary me-2">
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyToday.nb_prem %> / <%= pCompanyToday.nb_pol %>
+            <span class="ms-1 fw-semibold nb-metric">
+              <%= panelCompanyToday.nb_prem %> / <%= panelCompanyToday.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-info me-2">
               <i class="ti ti-repeat ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyToday.rn_prem %> / <%= pCompanyToday.rn_pol %>
+            <span class="ms-1 fw-semibold rn-metric">
+              <%= panelCompanyToday.rn_prem %> / <%= panelCompanyToday.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-warning me-2">
               <i class="ti ti-writing ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyToday.rw_prem %> / <%= pCompanyToday.rw_pol %>
+            <span class="ms-1 fw-semibold rw-metric">
+              <%= panelCompanyToday.rw_prem %> / <%= panelCompanyToday.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
             <span class="avatar-initial rounded-circle bg-label-success me-2">
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyToday.tot_prem %> / <%= pCompanyToday.tot_pol %>
+            <span class="ms-1 fw-semibold tot-metric">
+              <%= panelCompanyToday.tot_prem %> / <%= panelCompanyToday.tot_pol %>
             </span>
           </div>
         </div>
@@ -364,8 +378,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
     </div>
 
     <!-- Agency/Corporate This Month -->
-    <div class="col-sm-6 col-lg-3 mb-2">
-      <p class="mb-0 text-primary fw-semibold letter-spacing-1">
+    <div class="col-sm-6 col-lg-3 mb-2 metric-card" id="agency-month-panel">
+      <p class="mb-0 text-primary fw-semibold letter-spacing-1 panel-title">
         <%= panelMonthText %>
       </p>
       <div class="card border-0 shadow-sm">
@@ -374,32 +388,32 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             <span class="avatar-initial rounded-circle bg-label-primary me-2">
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pMonth.nb_prem %> / <%= pMonth.nb_pol %>
+            <span class="ms-1 fw-semibold nb-metric">
+              <%= panelMonth.nb_prem %> / <%= panelMonth.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-info me-2">
               <i class="ti ti-repeat ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pMonth.rn_prem %> / <%= pMonth.rn_pol %>
+            <span class="ms-1 fw-semibold rn-metric">
+              <%= panelMonth.rn_prem %> / <%= panelMonth.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-warning me-2">
               <i class="ti ti-writing ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pMonth.rw_prem %> / <%= pMonth.rw_pol %>
+            <span class="ms-1 fw-semibold rw-metric">
+              <%= panelMonth.rw_prem %> / <%= panelMonth.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
             <span class="avatar-initial rounded-circle bg-label-success me-2">
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pMonth.tot_prem %> / <%= pMonth.tot_pol %>
+            <span class="ms-1 fw-semibold tot-metric">
+              <%= panelMonth.tot_prem %> / <%= panelMonth.tot_pol %>
             </span>
           </div>
         </div>
@@ -407,8 +421,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
     </div>
 
     <!-- Company This Month -->
-    <div class="col-sm-6 col-lg-3 mb-2">
-      <p class="mb-0 text-primary fw-semibold letter-spacing-1">
+    <div class="col-sm-6 col-lg-3 mb-2 metric-card" id="company-month-panel">
+      <p class="mb-0 text-primary fw-semibold letter-spacing-1 panel-title">
         Company - This Month
       </p>
       <div class="card border-0 shadow-sm">
@@ -417,32 +431,32 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             <span class="avatar-initial rounded-circle bg-label-primary me-2">
               <i class="ti ti-user-dollar ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyMonth.nb_prem %> / <%= pCompanyMonth.nb_pol %>
+            <span class="ms-1 fw-semibold nb-metric">
+              <%= panelCompanyMonth.nb_prem %> / <%= panelCompanyMonth.nb_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-info me-2">
               <i class="ti ti-repeat ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyMonth.rn_prem %> / <%= pCompanyMonth.rn_pol %>
+            <span class="ms-1 fw-semibold rn-metric">
+              <%= panelCompanyMonth.rn_prem %> / <%= panelCompanyMonth.rn_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center mb-2">
             <span class="avatar-initial rounded-circle bg-label-warning me-2">
               <i class="ti ti-writing ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyMonth.rw_prem %> / <%= pCompanyMonth.rw_pol %>
+            <span class="ms-1 fw-semibold rw-metric">
+              <%= panelCompanyMonth.rw_prem %> / <%= panelCompanyMonth.rw_pol %>
             </span>
           </div>
           <div class="d-flex align-items-center">
             <span class="avatar-initial rounded-circle bg-label-success me-2">
               <i class="ti ti-moneybag ti-lg"></i>
             </span>
-            <span class="ms-1 fw-semibold">
-              <%= pCompanyMonth.tot_prem %> / <%= pCompanyMonth.tot_pol %>
+            <span class="ms-1 fw-semibold tot-metric">
+              <%= panelCompanyMonth.tot_prem %> / <%= panelCompanyMonth.tot_pol %>
             </span>
           </div>
         </div>
@@ -450,9 +464,6 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
     </div>
   </div>
 </div>
-
-             <!--Metrica -->
-
 
  <!-- CSR Ranking  -->
  <div class="container-xxl flex-grow-1 container-p-y">
@@ -480,7 +491,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             </div>
             <div class="col-5 text-center text-sm-left">
               <div class="card-body pb-0 px-0 px-md-4">
-                <img src="/img/illustrations/users/<%= csr.id_user %>.png" height="140" alt="<%= csr.csr %>" />
+                <img src="/img/illustrations/users/<%= csr.id_user %>.png" height="140" alt="<%= csr.csr %>" 
+                     onerror="this.onerror=null; this.src='/img/illustrations/csr/default.png';" />
               </div>
             </div>
           </div>
@@ -517,7 +529,6 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
 
   <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-4"> 
-    
     <!-- Agencies Today -->
     <div class="col">
       <div class="card shadow-sm h-100">
@@ -532,12 +543,21 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             </h6>
           </div>
         </div>
+     
         <div class="card-body p-0">
           <div style="max-height: 400px; overflow-y: auto;">
             <% if (agencyRanking && agencyRanking.length > 0) { %>
               <% agencyRanking.forEach(function(agency) { %>
                 <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                  <div><strong><%= agency.location %></strong></div>
+                  <div class="d-flex align-items-center">
+                    <!-- Avatar para la agencia -->
+                    <div class="avatar avatar-sm me-2">
+                      <span class="avatar-initial rounded-circle bg-label-<%= ['primary','success','info','warning','danger','secondary'][Math.floor(Math.random() * 6)] %>">
+                        <%= agency.location.substring(0,2) %>
+                      </span>
+                    </div>
+                    <div><strong><%= agency.location %></strong></div>
+                  </div>
                   <div class="small text-muted"><%= agency.premium %> / <%= agency.policies %></div>
                 </div>
               <% }); %>
@@ -559,7 +579,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
           </div>
           <div>
             <h6 class="pt-2 mb-0">
-              <b><%= pCompanyMonth.nb_prem %> / <%= pCompanyMonth.nb_pol %></b>
+              <!-- CORRECCIÓN: Usar panelCompanyMonth en lugar de pCompanyMonth -->
+              <b><%= panelCompanyMonth.nb_prem %> / <%= panelCompanyMonth.nb_pol %></b>
             </h6>
           </div>
         </div>
@@ -568,17 +589,27 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             <% if (agencyRanking && agencyRanking.length > 0) { %>
               <% agencyRanking.forEach(function(agency) { %>
                 <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                  <div>
-                    <div class="fw-bold text-dark"><%= agency.premium %> / <%= agency.policies %></div>
-                    <div class="small text-muted"><%= agency.location %></div>
+                  <div class="d-flex align-items-center">
+                    <!-- Avatar para la agencia -->
+                    <div class="avatar avatar-sm me-2">
+                      <span class="avatar-initial rounded-circle bg-label-<%= ['primary','success','info','warning','danger','secondary'][Math.floor(Math.random() * 6)] %>">
+                        <%= agency.location.substring(0,2) %>
+                      </span>
+                    </div>
+                    <div>
+                      <div class="fw-bold text-dark"><%= agency.premium %> / <%= agency.policies %></div>
+                      <div class="small text-muted"><%= agency.location %></div>
+                    </div>
                   </div>
                   <div>
-                    <% if (parseFloat(agency.percent) > 0) { %>
-                      <span class="fw-bold" style="color: green;"><%= agency.percent %>%</span>
-                    <% } else if (parseFloat(agency.percent) < 0) { %>
-                      <span class="fw-bold" style="color: red;"><%= agency.percent %>%</span>
-                    <% } else { %>
-                      <span class="fw-bold"><%= agency.percent %>%</span>
+                    <% if (agency.percent && agency.percent !== '%') { %>
+                      <% if (parseFloat(agency.percent) > 0) { %>
+                        <span class="fw-bold" style="color: green;"><%= agency.percent %>%</span>
+                      <% } else if (parseFloat(agency.percent) < 0) { %>
+                        <span class="fw-bold" style="color: red;"><%= agency.percent %>%</span>
+                      <% } else { %>
+                        <span class="fw-bold"><%= agency.percent %>%</span>
+                      <% } %>
                     <% } %>
                   </div>
                 </div>
@@ -601,7 +632,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
           </div>
           <div>
             <h6 class="pt-2 mb-0">
-              <b><%= pCompanyMonth.nb_prem %> / <%= pCompanyMonth.nb_pol %></b>
+              <!-- CORRECCIÓN: Usar panelCompanyMonth en lugar de pCompanyMonth -->
+              <b><%= panelCompanyMonth.nb_prem %> / <%= panelCompanyMonth.nb_pol %></b>
             </h6>
           </div>
         </div>
@@ -610,17 +642,25 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
             <% if (carrierRanking && carrierRanking.length > 0) { %>
               <% carrierRanking.forEach(function(carrier) { %>
                 <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                  <div>
-                    <div class="fw-bold text-dark"><%= carrier.premium %> / <%= carrier.policies %> pólizas</div>
-                    <div class="small text-muted"><%= carrier.carrier_name %></div>
+                  <div class="d-flex align-items-center">
+                    <!-- Avatar para el carrier -->
+                    <div class="avatar avatar-sm me-2">
+                      <span class="avatar-initial rounded-circle bg-label-<%= ['primary','success','info','warning','danger','secondary'][Math.floor(Math.random() * 6)] %>">
+                        <%= carrier.carrier_name.substring(0,2) %>
+                      </span>
+                    </div>
+                    <div>
+                      <div class="fw-bold text-dark"><%= carrier.premium %> / <%= carrier.policies %> pólizas</div>
+                      <div class="small text-muted"><%= carrier.carrier_name %></div>
+                    </div>
                   </div>
                   <div>
-                    <% if (parseFloat(carrier.percent_premium_growth) > 0) { %>
-                      <span class="fw-bold" style="color: green;"><%= carrier.percent_premium_growth %>%</span>
-                    <% } else if (parseFloat(carrier.percent_premium_growth) < 0) { %>
-                      <span class="fw-bold" style="color: red;"><%= carrier.percent_premium_growth %>%</span>
-                    <% } else { %>
-                      <span class="fw-bold"><%= carrier.percent_premium_growth %>%</span>
+                    <% if (carrier.percent_premium_growth && carrier.percent_premium_growth !== '%') { %>
+                      <% if (parseFloat(carrier.percent_premium_growth) > 0) { %>
+                        <span class="fw-bold" style="color: green;"><%= carrier.percent_premium_growth %>%</span>
+                      <% } else if (parseFloat(carrier.percent_premium_growth) < 0) { %>
+                        <span class="fw-bold" style="color: red;"><%= carrier.percent_premium_growth %>%</span>
+                      <% } %>
                     <% } %>
                   </div>
                 </div>
@@ -632,7 +672,6 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -670,6 +709,8 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
   </div>
   <!-- / Layout wrapper -->
   <!-- Core JS -->
+
+
   <script src="/vendor/js/bootstrap.js"></script>
   <script src="/vendor/libs/jquery/jquery.js"></script>
   <script src="/vendor/libs/popper/popper.js"></script>
@@ -683,5 +724,7 @@ const panelMonthText = location_type == 1 ? "Corporate - This Month" : (agency_n
   <script src="/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/dashboard-crm.js"></script>
+<script src="/js/agency-dashboard-metrics.js"></script>
+
 </body>
 </html>
